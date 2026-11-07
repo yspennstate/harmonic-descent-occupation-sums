@@ -1,0 +1,235 @@
+\documentclass[11pt]{amsart}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype,amsmath,amssymb,amsthm,mathtools,booktabs}
+\usepackage[margin=1.1in]{geometry}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xurl}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\numberwithin{equation}{section}
+
+\newcommand{\E}{\mathbb{E}}
+\renewcommand{\P}{\mathbb{P}}
+
+\hypersetup{pdftitle={Occupation sums of the harmonic descent chain and slowly decaying weights},pdfauthor={Yitzchak Shmalo}}
+
+\title[Occupation sums and slowly decaying weights]{Occupation sums of the harmonic descent chain and slowly decaying weights}
+\author{Yitzchak Shmalo}
+\address{Einstein Institute of Mathematics, The Hebrew University of Jerusalem, Jerusalem, Israel}
+\email{yitzchak.shmalo@gmail.com}
+\date{7 November 2026}
+
+\begin{document}
+
+\begin{abstract}
+Let $a(n,i)$ be the probability that the harmonic descent chain started at $n$ visits $i$, and $a(i)=\lim_n a(n,i)$.
+Aldous and Janson asked whether $\sum_{i=2}^n a(n,i)f(i)\to\sum_{i\ge2}a(i)f(i)$ for every non-negative $f$ of
+polynomial growth with a finite limit sum, and Brandenberger, Chin and Mossel proved this when $f(i)=O(i^{-\varepsilon})$.
+We show that for every $\delta>0$ there is an $f$ with $f(i)=O((\log i)^{-1+\delta})$ and
+$\sum_i a(i)f(i)<\infty$ for which the occupation sums are unbounded, along values of $n$ with $f(n)=0$. The cause is that
+the chain started at $n$ makes, on average, at least of order $\log n/\log\log n$ visits to a window of width
+$n/(\log n)^2$ just below $n$.
+\end{abstract}
+
+\maketitle
+
+\section{The question}
+
+The harmonic descent chain is the Markov chain on $\{1,2,\dots\}$ which, from a state $m\ge2$, jumps to $m-d$ with
+probability
+\begin{equation}\label{eq:kernel}
+p(m,m-d)=\frac{1}{d\,h_{m-1}},\qquad 1\le d\le m-1,\qquad h_r=\sum_{j=1}^r\frac1j,
+\end{equation}
+and stays at $1$ forever. Started at $n$, it records the clade sizes on the path from the root to a uniformly chosen leaf
+of the discrete-time critical beta-splitting tree with $n$ leaves \cite{AP,AJ,AJL}. Let $a(n,i)$ be the probability that
+the chain started at $n$ ever visits $i$, so that $a(n,n)=a(n,1)=1$. For fixed $i\ge2$ the limit
+\begin{equation}\label{eq:limit}
+a(i)=\lim_{n\to\infty}a(n,i)=\frac{6\,h_{i-1}}{\pi^2(i-1)}
+\end{equation}
+exists \cite[Theorem~18]{AJ}, \cite{AJL}. Aldous and Janson \cite[Open Problem~8]{AJ} asked for bounds on
+$|a(n,i)-a(i)|$, and in particular for a proof of the following statement.
+
+\medskip\noindent\textbf{Ansatz 20 of \cite{AJ}.} For a non-negative sequence $(f(j),\,j\ge2)$ with $f(j)=O(j^k)$ for some
+$k<\infty$:
+\begin{enumerate}
+\item[(i)] if $\sum_{i\ge2}a(i)f(i)<\infty$ then $\sum_{i=2}^n a(n,i)f(i)\to\sum_{i\ge2}a(i)f(i)$;
+\item[(ii)] if $\sum_{i\ge2}a(i)f(i)=\infty$ then $\sum_{i=2}^n a(n,i)f(i)\sim\sum_{i=2}^n a(i)f(i)$.
+\end{enumerate}
+
+\medskip
+Brandenberger, Chin and Mossel \cite{BCM} proved (i) for every non-negative $f$ with $f(i)=O(i^{-\varepsilon})$ for some
+$\varepsilon>0$, as a consequence of their rate $a(n,i)-a(i)=n^{-\beta+o(1)}$; Svihla \cite{S} gives the exact
+asymptotic expansion of $a(n,i)-a(i)$ for $i=o(\sqrt n)$. Since $a(n,n)=1$, part (i) as stated fails for any $f$ with
+$\sum a(i)f(i)<\infty$ and $\limsup f(n)>0$, through the single term $i=n$; Aldous and Janson remark that the method is
+meant for statistics that are not sensitive to the near-root structure. The point of this note is that the near-root
+structure matters well beyond that one term: the states just below $n$ are visited many times, and a weight that decays
+only like a power of $\log i$ can see them.
+
+\begin{theorem}\label{thm:main}
+For every $\delta\in(0,1)$ there is a sequence $f\ge0$ with $f(i)=O((\log i)^{-1+\delta})$ and
+$\sum_{i\ge2}a(i)f(i)<\infty$, and integers $N_j\to\infty$ with $f(N_j)=0$, such that
+\[
+\sum_{i=2}^{N_j}a(N_j,i)f(i)\longrightarrow\infty .
+\]
+In particular part (i) of Ansatz 20 fails for this $f$, and it fails for the sum over $2\le i\le n-1$ as well.
+\end{theorem}
+
+The decay $f(i)=O((\log i)^{-1+\delta})$ cannot be replaced by $O(i^{-\varepsilon})$, by \cite{BCM}. Between the two
+the question is open; see Remark~\ref{rem:gap}.
+
+\section{Visits just below the starting point}
+
+The chain is strictly decreasing until it reaches $1$, so it visits each state at most once and, for a set $B$ of states
+in $\{2,\dots,n-1\}$,
+\begin{equation}\label{eq:visits}
+\sum_{i\in B}a(n,i)=\E_n\bigl[\#\{t\ge1:\ X_t\in B\}\bigr].
+\end{equation}
+
+\begin{lemma}\label{lem:band}
+Let $n\ge4$ and let $T,L$ be integers with $1\le T\le L\le n-2$. Put $x=\lfloor L/T\rfloor$ and $q=h_x/h_{n-1}$. Then
+\[
+\sum_{i=n-L}^{n-1}a(n,i)\ \ge\ \sum_{t=1}^{T}q^t\ \ge\ T\,q^T .
+\]
+\end{lemma}
+
+\begin{proof}
+From any state $m$ with $2\le m\le n$, by \eqref{eq:kernel} the jump $d$ satisfies
+$\P(d\le x)=h_{\min(x,m-1)}/h_{m-1}\ge h_x/h_{n-1}=q$: if $x\le m-1$ this holds because $h_{m-1}\le h_{n-1}$, and if
+$x\ge m-1$ the probability is $1$. Let $E_t$ be the event that each of the first $t$ jumps is at most $x$. On $E_t$, for
+$1\le s\le t\le T$, we have $n-1\ge X_s\ge n-sx\ge n-Tx\ge n-L\ge2$, so the chain has not been absorbed and $X_s$ lies in
+$B=\{n-L,\dots,n-1\}$. By the Markov property $\P_n(E_t)\ge q^t$. Hence the number of visits to $B$ is at least
+$\sum_{t=1}^T\mathbf 1_{E_t}$, and \eqref{eq:visits} gives the first inequality. The second holds since $q\le1$.
+\end{proof}
+
+\begin{corollary}\label{cor:many}
+Let $N_j=2^{j^2}$, $L_j=\lfloor N_j/j^4\rfloor$ and $B_j=\{N_j-L_j,\dots,N_j-1\}$. Then for all large $j$,
+\[
+\sum_{i\in B_j}a(N_j,i)\ \ge\ e^{-9}\Bigl\lfloor\frac{j^2}{\log j}\Bigr\rfloor .
+\]
+\end{corollary}
+
+\begin{proof}
+Write $\ell=\log N_j=j^2\log2$ and take $T=\lfloor j^2/\log j\rfloor$, so $T\le L_j$ for large $j$. With
+$x=\lfloor L_j/T\rfloor$ we have $x+1\ge L_j/T\ge N_j/(2j^4T)$, so, using $h_x\ge\log(x+1)$, $T\le j^2$ and
+$h_{N_j-1}\le1+\ell$,
+\[
+q=\frac{h_x}{h_{N_j-1}}\ \ge\ \frac{\ell-4\log j-\log T-\log 2}{1+\ell}\ \ge\ 1-u,\qquad u=\frac{2+6\log j}{1+\ell}.
+\]
+Then $u\to0$ and $Tu\le(2+6\log j)/(\log j\cdot\log2)\to6/\log2<8.7$, so
+$q^T\ge\exp\bigl(-Tu/(1-u)\bigr)\ge e^{-9}$ for large $j$, and Lemma~\ref{lem:band} gives the bound.
+\end{proof}
+
+\section{Proof of Theorem~\ref{thm:main}}
+
+Fix $\delta\in(0,1)$ and take $N_j$, $L_j$, $B_j$ as in Corollary~\ref{cor:many}. Choose $j_0$ so large that the
+corollary holds for $j\ge j_0$ and $N_j-L_j>N_{j-1}$ for $j>j_0$; the blocks $B_j$, $j\ge j_0$, are then disjoint. Set
+\[
+f(i)=j^{-2+2\delta}\quad(i\in B_j,\ j\ge j_0),\qquad f(i)=0\ \text{otherwise}.
+\]
+Then $f(N_j)=0$ for every $j$.
+
+\emph{Decay.} For $i\in B_j$ we have $\log i\le\log N_j=j^2\log2$, so
+\[
+f(i)=(j^2)^{-(1-\delta)}=(\log 2)^{1-\delta}(\log N_j)^{-(1-\delta)}\le(\log i)^{-(1-\delta)}.
+\]
+
+\emph{Finite limit sum.} By \eqref{eq:limit} and $h_{i-1}\le1+\log i$ there is a constant $C$ with
+$a(i)\le C\log i/i$ for $i\ge2$. For $i\in B_j$ we have $i\ge N_j/2$, so
+\[
+\sum_{i\in B_j}a(i)\ \le\ C\,(j^2\log2)\,\frac{2\,(L_j+1)}{N_j}\ \le\ \frac{3C}{j^{2}}
+\]
+for large $j$, and $\sum_i a(i)f(i)\le\sum_j 3C\,j^{-4+2\delta}<\infty$.
+
+\emph{Unbounded occupation sums.} By Corollary~\ref{cor:many},
+\[
+\sum_{i=2}^{N_j}a(N_j,i)f(i)\ \ge\ j^{-2+2\delta}\sum_{i\in B_j}a(N_j,i)\ \ge\ e^{-9}\,j^{-2+2\delta}
+\Bigl\lfloor\frac{j^2}{\log j}\Bigr\rfloor\ \longrightarrow\ \infty .
+\]
+Every term used has $i\le N_j-1$, which proves the last sentence of the theorem.\qed
+
+\begin{remark}
+The weight in the proof is bounded, so it satisfies the growth condition of Ansatz 20 with $k=0$. Taking
+$f=\mathbf 1_{\bigcup_j B_j}$ (the case $\delta=1$) gives $\sum_i a(i)f(i)<\infty$ by the same estimate and occupation
+sums of order at least $j^2/\log j$ at $N_j$.
+\end{remark}
+
+\begin{remark}\label{rem:gap}
+The proof uses a window of relative width $(\log n)^{-2}$. A block of weight $c$ on a window of relative width $w$
+contributes about $c\,w\log n$ to the limit sum, while Lemma~\ref{lem:band} gives it at least $c\log n/\log\log n$ in the
+occupation sum when $w$ is at least a power of $(\log n)^{-1}$; for a window $n^{1-\eta}$ the jumps out of the window are
+no longer rare and the lemma gives only a bounded number of visits. The construction therefore stops short of weights of
+order $(\log i)^{-1}$, and we do not know whether part (i) holds for every $f$ with $f(i)=O((\log i)^{-1})$, or for
+every $f$ with $f(i)\to0$ that is monotone or regularly varying. For monotone $f$ the window just below $n$ carries weight close to $f(n)$, and the question becomes one
+about the sizes of $a(n,i)$ for $i$ near $n$, a range not covered by \cite{BCM} or \cite{S}.
+\end{remark}
+
+\section{A computation}
+
+By the Markov property, $a(n,n)=1$ and $a(n,i)=\sum_{m=i+1}^{n}a(n,m)\,/\,\bigl((m-i)\,h_{m-1}\bigr)$ for $i<n$; for $i$ in
+a window $\{n-L,\dots,n-1\}$ only states in the window and $n$ itself contribute, so the window sums can be computed
+exactly in $O(L^2)$ operations for very large $n$. Table~\ref{tab:band} lists $\sum_{i\in B_j}a(N_j,i)$ for the blocks of
+Corollary~\ref{cor:many} and the sums over the top sixteenth $\{n-n/16,\dots,n-1\}$ for $n=2^{10},2^{14},2^{18}$. The
+latter grow by about $0.88$ each time $n$ is multiplied by $16$, in line with the count of order $\log n$ in
+Remark~\ref{rem:gap}.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrr}
+\toprule
+$n$ & window $L$ & $\sum_{i=n-L}^{n-1}a(n,i)$ & \\
+\midrule
+$2^{9}$ & $\lfloor n/3^4\rfloor=6$ & $0.479$ & $j=3$\\
+$2^{16}$ & $n/4^4=256$ & $1.022$ & $j=4$\\
+$2^{25}$ & $\lfloor n/5^4\rfloor=53{,}687$ & $1.696$ & $j=5$\\
+\midrule
+$2^{10}$ & $n/16$ & $1.407$ & \\
+$2^{14}$ & $n/16$ & $2.286$ & \\
+$2^{18}$ & $n/16$ & $3.172$ & \\
+\bottomrule
+\end{tabular}
+\caption{Expected visits of the harmonic descent chain started at $n$ to the window just below $n$.}\label{tab:band}
+\end{table}
+
+\section*{Acknowledgements and funding}
+The research presented in this paper was supported by the European Research
+Council (ERC) under the European Union's Horizon Europe research and
+innovation programme (grant agreement No.~101041711), by the Simons
+Foundation as part of the Collaboration on the Mathematical and Scientific
+Foundations of Deep Learning, by Heights Labs, by Convex Nexus Capital, by
+the Israel Science Foundation (grant number 2258/19), and by the Israel
+Science Foundation (ISF Grant 4101/25). Computational resources were
+provided in part by Google Cloud through its education credits program
+(credit 530550103).
+
+\section*{Declaration of competing interest}
+The author holds equity in Heights Labs and in Convex Nexus Capital and
+has a management role at Convex Nexus Capital. These entities are included
+in the funding declaration above.
+
+\section*{Declaration of generative AI and AI-assisted technologies}
+The paper comes out of Math Brain, an ongoing project on the use of AI systems for research mathematics. In November 2026
+Claude Opus~5.5 (Anthropic), working in Claude Code, found the construction and the proofs, wrote and ran the
+computation of Table~\ref{tab:band}, and wrote the paper. The author directed the work and is responsible for the
+content of the paper and for decisions concerning its dissemination.
+
+\section*{Data availability}
+No data were used. The code for Table~\ref{tab:band}, with its output, is available at
+\url{https://github.com/yspennstate/harmonic-descent-occupation-sums}.
+
+\begin{thebibliography}{9}
+\bibitem{AJ} D.~Aldous and S.~Janson, \emph{The critical beta-splitting random tree II: overview and open problems},
+arXiv:2303.02529v3, 2024.
+\bibitem{AJL} D.~Aldous, S.~Janson and X.~Li, \emph{The harmonic descent chain}, arXiv:2405.05102, 2024.
+\bibitem{AP} D.~Aldous and B.~Pittel, \emph{The critical beta-splitting random tree I: heights and related results},
+arXiv:2302.05066.
+\bibitem{BCM} A.~Brandenberger, B.~Chin and E.~Mossel, \emph{Asymptotics for the harmonic descent chain and applications
+to critical beta-splitting trees}, arXiv:2505.24821v3, 2026.
+\bibitem{S} S.~P.~Svihla, \emph{Exact asymptotics for the harmonic descent chain and extended convergence bounds for
+recursive statistics}, arXiv:2611.00347, 2026.
+\end{thebibliography}
+
+\end{document}
