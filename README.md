@@ -22,6 +22,8 @@ Python 3 with numpy.
   operations. Output `band_visits.out` (Table 1 of the paper).
 - `cor_check.py`: the constants in the proof of Corollary 2.2 evaluated exactly for $3\le j\le 12$ and $j=20,40,80$:
   $T\le L_j$, $q\ge1-u$ and $q^T\ge e^{-9}$. Output `cor_check.out`.
+- `audit_mc.py`: the same window visits estimated by simulating the chain (200,000 runs per window), with no use of
+  the recursion. Output `audit_mc.out`; every estimate lies within 2.5 standard errors of `band_visits.out`.
 
 ## Funding
 
