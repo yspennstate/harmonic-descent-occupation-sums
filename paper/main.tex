@@ -1,11 +1,12 @@
 \documentclass[11pt]{amsart}
 \usepackage[T1]{fontenc}
-\usepackage{lmodern,microtype,amsmath,amssymb,amsthm,mathtools,booktabs}
+\usepackage{lmodern,microtype,amsmath,amssymb,amsthm,mathtools,booktabs,longtable}
 \usepackage[margin=1.1in]{geometry}
 \usepackage[hidelinks]{hyperref}
 \usepackage{xurl}
 
 \newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{corollary}[theorem]{Corollary}
 \theoremstyle{remark}
@@ -14,6 +15,7 @@
 
 \newcommand{\E}{\mathbb{E}}
 \renewcommand{\P}{\mathbb{P}}
+\newcommand{\ind}{\mathbf{1}}
 
 \hypersetup{pdftitle={Occupation sums of the harmonic descent chain and slowly decaying weights},pdfauthor={Yitzchak Shmalo}}
 
@@ -21,177 +23,495 @@
 \author{Yitzchak Shmalo}
 \address{Einstein Institute of Mathematics, The Hebrew University of Jerusalem, Jerusalem, Israel}
 \email{yitzchak.shmalo@gmail.com}
-\date{7 November 2026}
+\date{12 November 2026}
+\subjclass[2020]{Primary 60J10; Secondary 60J80, 60C05, 05C05}
+\keywords{harmonic descent chain, critical beta-splitting tree, occupation probability, harmonic number}
 
 \begin{document}
 
 \begin{abstract}
-Let $a(n,i)$ be the probability that the harmonic descent chain started at $n$ visits $i$, and $a(i)=\lim_n a(n,i)$.
-Aldous and Janson asked whether $\sum_{i=2}^n a(n,i)f(i)\to\sum_{i\ge2}a(i)f(i)$ for every non-negative $f$ of
-polynomial growth with a finite limit sum, and Brandenberger, Chin and Mossel proved this when $f(i)=O(i^{-\varepsilon})$.
-We show that for every $\delta>0$ there is an $f$ with $f(i)=O((\log i)^{-1+\delta})$ and
-$\sum_i a(i)f(i)<\infty$ for which the occupation sums are unbounded, along values of $n$ with $f(n)=0$. The cause is that
-the chain started at $n$ makes, on average, at least of order $\log n/\log\log n$ visits to a window of width
-$n/(\log n)^2$ just below $n$.
+The harmonic descent chain jumps from a state $m\ge2$ to $m-d$ with probability proportional to $1/d$. Started at $n$, it
+records the clade sizes on the path from the root to a uniform leaf of the critical beta-splitting tree with $n$ leaves.
+Let $a(n,i)$ be the probability that the chain started at $n$ visits $i$, and let $a(i)$ be its limit as $n\to\infty$.
+Aldous and Janson asked whether the occupation sums $\sum_{i\le n}a(n,i)f(i)$ converge to $\sum_{i}a(i)f(i)$ for every
+non-negative weight $f$ of polynomial growth for which the limit sum is finite. Brandenberger, Chin and Mossel proved
+the convergence when $f(i)=O(i^{-\varepsilon})$. We prove it whenever $f(i)=O(1/\log i)$, and we show that this rate is
+the threshold: for every $\varphi$ tending to infinity there is a weight $f(i)\le\varphi(i)/\log i$, tending to zero,
+with a finite limit sum and unbounded occupation sums. The companion statement for infinite limit sums fails for
+weights of linear growth, where the ratio of the two sides tends to $\pi^2/6$, and for a bounded weight.
 \end{abstract}
 
 \maketitle
 
-\section{The question}
+\section{Introduction}\label{sec:intro}
 
-The harmonic descent chain is the Markov chain on $\{1,2,\dots\}$ which, from a state $m\ge2$, jumps to $m-d$ with
-probability
+The harmonic descent chain is the Markov chain $(X_t)_{t\ge0}$ on $\{1,2,\dots\}$ which, from a state $m\ge2$, jumps to
+$m-d$ with probability
 \begin{equation}\label{eq:kernel}
-p(m,m-d)=\frac{1}{d\,h_{m-1}},\qquad 1\le d\le m-1,\qquad h_r=\sum_{j=1}^r\frac1j,
+p(m,m-d)=\frac{1}{d\,h_{m-1}}\qquad(1\le d\le m-1),
 \end{equation}
-and stays at $1$ forever. Started at $n$, it records the clade sizes on the path from the root to a uniformly chosen leaf
-of the discrete-time critical beta-splitting tree with $n$ leaves \cite{AP,AJ,AJL}. Let $a(n,i)$ be the probability that
-the chain started at $n$ ever visits $i$, so that $a(n,n)=a(n,1)=1$. For fixed $i\ge2$ the limit
+and which stays at $1$ once it is there. Here $h_r=\sum_{j=1}^r1/j$ is the $r$th harmonic number, and $h_0=0$. We write
+$\P_n$ and $\E_n$ for probability and expectation when $X_0=n$. Asymptotic statements refer to the limit
+of the variable named, $n\to\infty$ unless another is stated: $x_n\sim y_n$ means $x_n/y_n\to1$, $x_n=o(y_n)$ means
+$x_n/y_n\to0$, and $x_n=O(y_n)$ means $|x_n|\le Cy_n$ for a constant $C$ that does not depend on $n$. Started at $n$, the chain records the clade sizes on the
+path from the root to a uniformly chosen leaf of the discrete-time critical beta-splitting tree with $n$ leaves
+\cite{AP,AJ,AJL}.
+
+The occupation probability $a(n,i)$ is the probability that the chain started at $n$ visits the state $i$, so that
+$a(n,n)=a(n,1)=1$. For every fixed $i\ge2$ the limit
 \begin{equation}\label{eq:limit}
 a(i)=\lim_{n\to\infty}a(n,i)=\frac{6\,h_{i-1}}{\pi^2(i-1)}
 \end{equation}
-exists \cite[Theorem~18]{AJ}, \cite{AJL}; Iksanov \cite{I} gave a second proof through the theory of regenerative composition structures, and Chorbadzhiyska, Minchev and Savov \cite{CMS} express the occupation probabilities of a typical leaf, for the whole beta-splitting family, through the potential measure of a subordinator. Aldous and Janson \cite[Open Problem~8]{AJ} asked for bounds on
-$|a(n,i)-a(i)|$, and in particular for a proof of the following statement.
+exists \cite[Theorem~18]{AJ}, \cite{AJL}. Iksanov \cite{I} gave a second proof through regenerative composition
+structures, and Chorbadzhiyska, Minchev and Savov \cite{CMS} express the occupation probabilities, for the whole
+beta-splitting family, through the potential measure of a subordinator. Aldous and Janson
+\cite[Section~4.7, Open Problem~8]{AJ} asked for explicit bounds on $|a(n,i)-a(i)|$, and in particular for a proof of
+the following statement.
 
-\medskip\noindent\textbf{Ansatz 20 of \cite{AJ}.} For a non-negative sequence $(f(j),\,j\ge2)$ with $f(j)=O(j^k)$ for some
-$k<\infty$:
+\medskip\noindent\textbf{Ansatz 20 of \cite{AJ}.} For a non-negative sequence $(f(j),\,j\ge2)$ such that $f(j)=O(j^k)$
+for some $k<\infty$:
 \begin{enumerate}
 \item[(i)] if $\sum_{i\ge2}a(i)f(i)<\infty$ then $\sum_{i=2}^n a(n,i)f(i)\to\sum_{i\ge2}a(i)f(i)$;
 \item[(ii)] if $\sum_{i\ge2}a(i)f(i)=\infty$ then $\sum_{i=2}^n a(n,i)f(i)\sim\sum_{i=2}^n a(i)f(i)$.
 \end{enumerate}
 
 \medskip
-Brandenberger, Chin and Mossel \cite{BCM} proved (i) for every non-negative $f$ with $f(i)=O(i^{-\varepsilon})$ for some
-$\varepsilon>0$, as a consequence of their rate $a(n,i)-a(i)=n^{-\beta+o(1)}$; Svihla \cite{S} gives the exact
-asymptotic expansion of $a(n,i)-a(i)$ for $i=o(\sqrt n)$. Since $a(n,n)=1$, part (i) as stated fails for any $f$ with
-$\sum a(i)f(i)<\infty$ and $\limsup f(n)>0$, through the single term $i=n$; Aldous and Janson remark that the method is
-meant for statistics that are not sensitive to the near-root structure. The point of this note is that the near-root
-structure matters well beyond that one term: the states just below $n$ are visited many times, and a weight that decays
-only like a power of $\log i$ can see them.
+We call a non-negative sequence $f$ on $\{2,3,\dots\}$ a weight, $\sum_{i=2}^n a(n,i)f(i)$ its occupation sum at $n$, and
+$\sum_{i\ge2}a(i)f(i)$, finite or not, its limit sum. The Ansatz is the step that turns the limit \eqref{eq:limit} into
+asymptotics for additive statistics of the tree, such as the balance indices of \cite[Section~4.9]{AJ}, where it is
+noted that the method can work only for indices that are not sensitive to the structure near the root.
 
-\begin{theorem}\label{thm:main}
-For every $\delta\in(0,1)$ there is a sequence $f\ge0$ with $f(i)=O((\log i)^{-1+\delta})$ and
-$\sum_{i\ge2}a(i)f(i)<\infty$, and integers $N_j\to\infty$ with $f(N_j)=0$, such that
+Brandenberger, Chin and Mossel \cite{BCM} proved part~(i) for every weight with $f(i)=O(i^{-\varepsilon})$ for some
+$\varepsilon>0$. Their main theorem contains the monotonicity conjectured in \cite{AP}: for each $i\ge2$ the sequence
+$a(n,i)$, $n\ge i$, is strictly decreasing \cite[Theorem~1.1(i)]{BCM}. It also gives the rate
+$a(n,i)-a(i)=n^{-\gamma_*+o(1)}$ for fixed $i$, with $\gamma_*=1.567\dots$, and two-sided bounds of this kind for
+$i=o(n/\log^3n)$ \cite[(1.6), (1.7)]{BCM}. Svihla \cite{S} gives an exact asymptotic expansion of $a(n,i)$ for
+$i=o(\sqrt n)$. These results concern states $i$ far below the starting point $n$. The Ansatz also involves the states
+$i$ of the same order as $n$, and these are the subject of this paper.
+
+Part~(i) restricts the decay of the weight. The occupation sum at $n$ contains the term $a(n,n)f(n)=f(n)$, and by Fatou's
+lemma and \eqref{eq:limit} the other terms satisfy
 \[
-\sum_{i=2}^{N_j}a(N_j,i)f(i)\longrightarrow\infty .
+\liminf_{n\to\infty}\sum_{i=2}^{n-1}a(n,i)f(i)\ge\sum_{i\ge2}a(i)f(i).
 \]
-In particular part (i) of Ansatz 20 fails for this $f$, and it fails for the sum over $2\le i\le n-1$ as well.
+Part~(i) can therefore hold only for weights with
+$f(n)\to0$, and the question is how slowly $f$ may decay. The answer is the rate $1/\log i$.
+
+\begin{theorem}\label{thm:conv}
+Let $f$ be a weight with $f(i)\le K/\log i$ for all $i\ge2$ and some constant $K<\infty$, and suppose that
+$\sum_{i\ge2}a(i)f(i)<\infty$. Then
+\[
+\sum_{i=2}^{n}a(n,i)f(i)\to\sum_{i\ge2}a(i)f(i)\qquad(n\to\infty).
+\]
 \end{theorem}
 
-The decay $f(i)=O((\log i)^{-1+\delta})$ cannot be replaced by $O(i^{-\varepsilon})$, by \cite{BCM}. Between the two
-the question is open; see Remark~\ref{rem:gap}.
+\begin{theorem}\label{thm:div}
+Let $\varphi$ be a positive sequence on $\{2,3,\dots\}$ with $\varphi(i)\to\infty$. There are a weight $f$ and integers
+$N_1<N_2<\cdots$ such that $f(i)\le\varphi(i)/\log i$ for all $i\ge2$, $f(i)\to0$, $\sum_{i\ge2}a(i)f(i)<\infty$,
+$f(N_j)=0$ for every $j$, and
+\[
+\sum_{i=2}^{N_j}a(N_j,i)f(i)\to\infty\qquad(j\to\infty).
+\]
+\end{theorem}
 
-\section{Visits just below the starting point}
+The weight of Theorem~\ref{thm:div} is bounded, so it satisfies the growth condition of the Ansatz with $k=0$, and
+part~(i) fails for it. Since $f(N_j)=0$, the same holds for the sums over $2\le i\le n-1$.
 
-The chain is strictly decreasing until it reaches $1$, so it visits each state at most once and, for a set $B$ of states
-in $\{2,\dots,n-1\}$,
+Part~(ii) fails for weights that grow, and also for a bounded weight. Let
+\begin{equation}\label{eq:g}
+g(i)=\frac{i-1}{h_{i-1}}\qquad(i\ge2),
+\end{equation}
+which by \eqref{eq:kernel} is the expected size of the jump out of the state $i$.
+
+\begin{proposition}\label{prop:two}
+\begin{enumerate}
+\item[(a)] For every $n\ge2$,
+\[
+\sum_{i=2}^{n}a(n,i)g(i)=n-1\qquad\text{and}\qquad\sum_{i=2}^{n}a(i)g(i)=\frac{6}{\pi^2}\,(n-1).
+\]
+If $f$ is a weight with $f(i)/i\to c$ for some $c\in(0,\infty)$, then
+\[
+\sum_{i=2}^{n}a(n,i)f(i)\sim c\,n\log n\qquad\text{and}\qquad\sum_{i=2}^{n}a(i)f(i)\sim\frac{6}{\pi^2}\,c\,n\log n .
+\]
+\item[(b)] There is a weight $f$ with values in $\{0,1\}$ such that $\sum_{i\ge2}a(i)f(i)=\infty$ and
+\[
+\limsup_{n\to\infty}\ \frac{\sum_{i=2}^{n}a(n,i)f(i)}{\sum_{i=2}^{n}a(i)f(i)}=\infty .
+\]
+\end{enumerate}
+\end{proposition}
+
+In part~(a) the two sides of part~(ii) of the Ansatz differ by the factor $\pi^2/6$. A weight of this kind, with
+$f(j)\sim j/4$, is the one to which the Ansatz is applied in \cite[Section~4.9.2]{AJ}.
+
+\begin{remark}\label{rem:monotone}
+Part~(i) holds for every non-increasing weight with a finite limit sum. Indeed, \eqref{eq:limit} gives
+$a(k)\ge6/(\pi^2(k-1))$, so for a non-increasing weight
+\[
+f(i)\,\frac{6}{\pi^2}\,\log i\le f(i)\sum_{k=2}^{i}a(k)\le\sum_{k\ge2}a(k)f(k),
+\]
+and Theorem~\ref{thm:conv} applies.
+\end{remark}
+
+All of these statements come from counting the visits of the chain to the states just below its starting point. For
+integers $1\le L\le n-2$ we call
+\[
+W(n,L)=\{n-L,\dots,n-1\}
+\]
+the window of width $L$ below $n$, and we write
+\begin{equation}\label{eq:V}
+V(n,L)=\sum_{i\in W(n,L)}a(n,i)
+\end{equation}
+for the expected number of visits of the chain started at $n$ to this window. Lemma~\ref{lem:window} and
+Corollary~\ref{cor:many} give
+\[
+\frac{\log n}{10\log(8n/L)}\le V(n,L)\le\frac{h_L}{h_{n-L-1}-h_L}
+\]
+when $8\le L<n/2$ and $h_{n-1}\ge2\log(8n/L)$. Fix $j\ge2$ and let $L=\lfloor n/2^{j}\rfloor$. For large $n$ both
+conditions hold, and the window $W(n,L)$ receives of order $(\log n)/j$ visits, while by \eqref{eq:limit} the limits
+$a(i)$ of its states add up to $(6/\pi^2)\bigl(-\log(1-2^{-j})+o(1)\bigr)\log n$, which is of order $2^{-j}\log n$. A weight of
+size $K/\log n$ on such a window adds a bounded amount to the occupation sum, while a weight of size
+$\varphi(n)/\log n$ with $\varphi(n)\to\infty$ can add an unbounded one.
+
+Section~\ref{sec:upper} contains the upper bounds and the proof of Theorem~\ref{thm:conv}, Section~\ref{sec:lower} the
+lower bound, and Section~\ref{sec:proofs} the proofs of Theorem~\ref{thm:div} and Proposition~\ref{prop:two}.
+Section~\ref{sec:num} reports a numerical check of the bounds, and the appendix lists the notation.
+
+\section{Upper bounds and the proof of Theorem~\ref{thm:conv}}\label{sec:upper}
+
+The chain decreases strictly until it reaches $1$, so it visits each state $i\ge2$ at most once. Hence, for a set $B$ of
+states in $\{2,\dots,n-1\}$,
 \begin{equation}\label{eq:visits}
-\sum_{i\in B}a(n,i)=\E_n\bigl[\#\{t\ge1:\ X_t\in B\}\bigr].
+\sum_{i\in B}a(n,i)=\E_n\bigl[\text{number of }t\ge1\text{ with }X_t\in B\bigr].
+\end{equation}
+We use the elementary bounds
+\begin{equation}\label{eq:harm}
+\log(r+1)\le h_r\le1+\log r\quad(r\ge1)\qquad\text{and}\qquad\frac{s-r}{s}\le h_s-h_r\le\log\frac{s}{r}\quad(1\le r\le s).
 \end{equation}
 
-\begin{lemma}\label{lem:band}
-Let $n\ge4$ and let $T,L$ be integers with $1\le T\le L\le n-2$. Put $x=\lfloor L/T\rfloor$ and $q=h_x/h_{n-1}$. Then
+\begin{lemma}\label{lem:window}
+Let $L\ge1$ and $n\ge2L+2$. Then
 \[
-\sum_{i=n-L}^{n-1}a(n,i)\ \ge\ \sum_{t=1}^{T}q^t\ \ge\ T\,q^T .
+V(n,L)\le\frac{h_L}{h_{n-L-1}-h_L}.
 \]
 \end{lemma}
 
 \begin{proof}
-From any state $m$ with $2\le m\le n$, by \eqref{eq:kernel} the jump $d$ satisfies
-$\P(d\le x)=h_{\min(x,m-1)}/h_{m-1}\ge h_x/h_{n-1}=q$: if $x\le m-1$ this holds because $h_{m-1}\le h_{n-1}$, and if
-$x\ge m-1$ the probability is $1$. Let $E_t$ be the event that each of the first $t$ jumps is at most $x$. On $E_t$, for
-$1\le s\le t\le T$, we have $n-1\ge X_s\ge n-sx\ge n-Tx\ge n-L\ge2$, so the chain has not been absorbed and $X_s$ lies in
-$B=\{n-L,\dots,n-1\}$. By the Markov property $\P_n(E_t)\ge q^t$. Hence the number of visits to $B$ is at least
-$\sum_{t=1}^T\mathbf 1_{E_t}$, and \eqref{eq:visits} gives the first inequality. The second holds since $q\le1$.
+Let $m$ be a state with $n-L\le m\le n$. The next state $m-d$ lies in $W(n,L)$ exactly when $d\le m-(n-L)$, and by
+\eqref{eq:kernel} this has probability
+\[
+\frac{h_{m-n+L}}{h_{m-1}}\le\frac{h_L}{h_{n-L-1}}=:\rho,
+\]
+because $m-n+L\le L$ and $m-1\ge n-L-1$. Since $n-L-1>L$ we have $\rho<1$. The chain is decreasing, so after it has left
+$W(n,L)\cup\{n\}$ it does not return. The number of its visits to $W(n,L)$ is therefore at least $k$ exactly when
+$X_1,\dots,X_k$ lie in $W(n,L)$, which by the Markov property has probability at most $\rho^k$. By \eqref{eq:visits},
+\[
+V(n,L)\le\sum_{k\ge1}\rho^k=\frac{\rho}{1-\rho}=\frac{h_L}{h_{n-L-1}-h_L}.\qedhere
+\]
+\end{proof}
+
+The next lemma bounds the occupation probabilities of a fixed state $i$ summed over the starting points just above $i$.
+
+\begin{lemma}\label{lem:start}
+Let $i\ge2$ and $0\le t<i$. Then
+\[
+S_t(i):=\sum_{\ell=i}^{i+t}a(\ell,i)\le\frac{h_i}{h_i-h_t}.
+\]
+\end{lemma}
+
+\begin{proof}
+Conditioning on the first jump gives, for $s\ge1$,
+\[
+a(i+s,i)=\frac{1}{h_{i+s-1}}\sum_{d=1}^{s}\frac{a(i+s-d,i)}{d}\le\frac{1}{h_i}\sum_{d=1}^{s}\frac{a(i+s-d,i)}{d},
+\]
+since $h_{i+s-1}\ge h_i$. Summing over $1\le s\le t$ and collecting the terms with $s-d=r$,
+\[
+S_t(i)-1\le\frac{1}{h_i}\sum_{r=0}^{t-1}a(i+r,i)\sum_{d=1}^{t-r}\frac1d
+=\frac{1}{h_i}\sum_{r=0}^{t-1}a(i+r,i)\,h_{t-r}\le\frac{h_t}{h_i}\,S_t(i).
+\]
+As $t<i$ we have $h_t<h_i$, and the bound follows.
+\end{proof}
+
+\begin{lemma}\label{lem:point}
+Let $i\ge2$, $0\le t<i$ and $n\ge i+t$. Then
+\[
+a(n,i)\le\frac{h_i}{(t+1)(h_i-h_t)},\qquad\text{and if }t\ge1\text{ also}\qquad a(n,i)\le\frac{h_t}{t\,(h_i-h_t)}.
+\]
+\end{lemma}
+
+\begin{proof}
+By \cite[Theorem~1.1(i)]{BCM} we have $a(n,i)\le a(m,i)$ for $i\le m\le n$. Hence
+$(t+1)\,a(n,i)\le S_t(i)$ and $t\,a(n,i)\le S_t(i)-a(i,i)=S_t(i)-1$, and Lemma~\ref{lem:start} gives both bounds.
+\end{proof}
+
+\begin{corollary}\label{cor:point}
+Let $i\ge2$.
+\begin{enumerate}
+\item[(a)] If $n\ge i+\lfloor i/2\rfloor$, then $a(n,i)\le4h_i/i\le\pi^2a(i)$.
+\item[(b)] If $0<\varepsilon\le1/2$ and $n-i\ge\varepsilon n$, then $a(n,i)\le\dfrac{\pi^2}{2\varepsilon}\,a(i)$.
+\end{enumerate}
+\end{corollary}
+
+\begin{proof}
+For $0\le t\le i/2$ the bound \eqref{eq:harm} gives $h_i-h_t\ge(i-t)/i\ge1/2$, so the first bound of
+Lemma~\ref{lem:point} reads
+\begin{equation}\label{eq:half}
+a(n,i)\le\frac{2h_i}{t+1}\qquad(n\ge i+t,\ 0\le t\le i/2).
+\end{equation}
+For (a) take $t=\lfloor i/2\rfloor$, so that $t+1>i/2$ and $a(n,i)\le4h_i/i$. Since $h_{i-1}\ge1$ we have
+$h_i\le h_{i-1}(1+1/i)$, and therefore
+\begin{equation}\label{eq:fourh}
+\frac{4h_i}{i}\le\frac{4(i+1)}{i^2}\,h_{i-1}\le\frac{6\,h_{i-1}}{i-1}=\pi^2a(i),
+\end{equation}
+the second inequality being $4(i^2-1)\le6i^2$. For (b), if $n\ge i+\lfloor i/2\rfloor$ the claim follows from (a) because
+$2\varepsilon\le1$. Otherwise $t=n-i<i/2$, and \eqref{eq:half} with $t+1>\varepsilon n\ge\varepsilon i$ gives
+$a(n,i)\le2h_i/(\varepsilon i)$, which is at most $\pi^2a(i)/(2\varepsilon)$ by \eqref{eq:fourh}.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:conv}]
+Fatou's lemma and \eqref{eq:limit} give $\liminf_n\sum_{i=2}^na(n,i)f(i)\ge\sum_{i\ge2}a(i)f(i)$, so we have to bound
+the upper limit. Fix $\varepsilon\in(0,1/3]$ and an integer $M\ge2$, and let $L=\lfloor\varepsilon n\rfloor$. For
+$n\ge\max(6,M/\varepsilon)$ we have $n\ge2L+2$ and $M\le n-L-1$, and we split the occupation sum at $n$ into the
+ranges $2\le i<M$ and $M\le i\le n-L-1$, the window $W(n,L)$, and the term $i=n$.
+
+By \eqref{eq:limit} the sum over $2\le i<M$ tends to $\sum_{i=2}^{M-1}a(i)f(i)$. For $M\le i\le n-L-1$ we have
+$n-i\ge L+1>\varepsilon n$, so Corollary~\ref{cor:point}(b) gives
+\[
+\sum_{i=M}^{n-L-1}a(n,i)f(i)\le\frac{\pi^2}{2\varepsilon}\sum_{i\ge M}a(i)f(i).
+\]
+On the window, $f(i)\le K/\log(n-L)$, so by Lemma~\ref{lem:window}
+\[
+\sum_{i\in W(n,L)}a(n,i)f(i)\le\frac{K}{\log(n-L)}\cdot\frac{h_L}{h_{n-L-1}-h_L}.
+\]
+As $n\to\infty$ we have $h_L/\log(n-L)\to1$ and $h_{n-L-1}-h_L\to\log((1-\varepsilon)/\varepsilon)$, which is at least
+$\log2$. The last term is $f(n)\le K/\log n$. Altogether,
+\[
+\limsup_{n\to\infty}\sum_{i=2}^{n}a(n,i)f(i)\le\sum_{i=2}^{M-1}a(i)f(i)+\frac{\pi^2}{2\varepsilon}\sum_{i\ge M}a(i)f(i)
++\frac{K}{\log((1-\varepsilon)/\varepsilon)}.
+\]
+Letting $M\to\infty$ and then $\varepsilon\to0$ gives $\limsup_n\sum_{i=2}^na(n,i)f(i)\le\sum_{i\ge2}a(i)f(i)$.
+\end{proof}
+
+\begin{remark}\label{rem:ratio}
+Let $f$ be a weight with $f(i)\le K/\log i$ and $\sum_{i\ge2}a(i)f(i)=\infty$. Then
+\[
+1\le\liminf_{n\to\infty}\frac{\sum_{i=2}^{n}a(n,i)f(i)}{\sum_{i=2}^{n}a(i)f(i)}
+\le\limsup_{n\to\infty}\frac{\sum_{i=2}^{n}a(n,i)f(i)}{\sum_{i=2}^{n}a(i)f(i)}\le\frac{3\pi^2}{2}.
+\]
+The lower bound holds because $a(n,i)\ge a(i)$ for $n\ge i$, by \cite[Theorem~1.1(i)]{BCM}. For the upper bound take
+$\varepsilon=1/3$ and $M=2$ in the proof above: the terms with $i\le n-L-1$ are at most $(3\pi^2/2)\,a(i)f(i)$, and the
+window and the term $i=n$ contribute a bounded amount. We do not know whether the ratio tends to $1$ for every such
+weight.
+\end{remark}
+
+\begin{remark}\label{rem:bcm}
+For $1\le t\le i^{\theta}$ with a fixed $\theta<1$, the second bound of Lemma~\ref{lem:point} is of order $h_t/(t\,h_i)$.
+In a range of this kind, and for large $i$, \cite[Theorem~1.1(iii)]{BCM} gives the bound $a(i+t,i)\le C/(t\,h_i)$,
+which is smaller by a factor of order $h_t$. Lemma~\ref{lem:point} has explicit constants and covers every $t<i$; the
+proof of Theorem~\ref{thm:conv} uses it with $t$ of order $i$.
+\end{remark}
+
+\section{A lower bound for the visits to a window}\label{sec:lower}
+
+For $s\ge1$ let $D_s=X_{s-1}-X_s$ be the $s$th jump of the chain, so that $D_s=0$ when $X_{s-1}=1$.
+
+\begin{lemma}\label{lem:lower}
+Let $n\ge4$, let $y,L,T$ be integers with $1\le y\le L\le n-2$ and $T\ge1$, and put $q=h_y/h_{n-1}$. Then
+\[
+V(n,L)\ge T\Bigl(q^{T}-\frac{T\,y}{L\,h_{n-L-1}}\Bigr).
+\]
+\end{lemma}
+
+\begin{proof}
+Let $2\le m\le n$. Given $X_{s-1}=m$, the probability that $D_s\le y$ is $h_y/h_{m-1}\ge q$ if $y\le m-1$, and is $1$
+otherwise; given $X_{s-1}=1$ it is $1$. By the Markov property the event $E=\{D_1\le y,\dots,D_T\le y\}$ has
+\[
+\P_n(E)\ge q^{T}.
+\]
+Let $Z=\sum_{s=1}^{T}D_s\,\ind\{D_s\le y,\ X_{s-1}\ge n-L\}$. Given $X_{s-1}=m\ge n-L$, the expectation of
+$D_s\ind\{D_s\le y\}$ is $\min(y,m-1)/h_{m-1}\le y/h_{n-L-1}$ by \eqref{eq:kernel}, so
+\[
+\E_n[Z]\le\frac{T\,y}{h_{n-L-1}}.
+\]
+On the event $E\cap\{X_T<n-L\}$ let $\tau\le T$ be the first time with $X_\tau<n-L$. For $s\le\tau$ we have
+$X_{s-1}\ge n-L$ and $D_s\le y$, so $Z\ge D_1+\dots+D_\tau=n-X_\tau>L$. By Markov's inequality,
+\[
+\P_n\bigl(E\cap\{X_T<n-L\}\bigr)\le\frac{\E_n[Z]}{L}\le\frac{T\,y}{L\,h_{n-L-1}}.
+\]
+On the event $E\cap\{X_T\ge n-L\}$ the chain has not reached $1$ by time $T$, because $n-L\ge2$. Hence
+$n-1\ge X_1>\dots>X_T\ge n-L$, and the chain makes at least $T$ visits to $W(n,L)$. By \eqref{eq:visits},
+\[
+V(n,L)\ge T\,\P_n\bigl(E\cap\{X_T\ge n-L\}\bigr)\ge T\Bigl(q^{T}-\frac{T\,y}{L\,h_{n-L-1}}\Bigr).\qedhere
+\]
 \end{proof}
 
 \begin{corollary}\label{cor:many}
-Let $N_j=2^{j^2}$, $L_j=\lfloor N_j/j^4\rfloor$ and $B_j=\{N_j-L_j,\dots,N_j-1\}$. Then for all large $j$,
+Let $8\le L\le n/2$, put $\lambda=\log(8n/L)$, and suppose that $h_{n-1}\ge2\lambda$. Then
 \[
-\sum_{i\in B_j}a(N_j,i)\ \ge\ e^{-9}\Bigl\lfloor\frac{j^2}{\log j}\Bigr\rfloor .
+V(n,L)\ge\frac{h_{n-1}}{10\,\lambda}\ge\frac{\log n}{10\log(8n/L)}.
 \]
 \end{corollary}
 
 \begin{proof}
-Write $\ell=\log N_j=j^2\log2$ and take $T=\lfloor j^2/\log j\rfloor$, so $T\le L_j$ for large $j$. With
-$x=\lfloor L_j/T\rfloor$ we have $x+1\ge L_j/T\ge N_j/(2j^4T)$, so, using $h_x\ge\log(x+1)$, $T\le j^2$ and
-$h_{N_j-1}\le1+\ell$,
+Write $H=h_{n-1}$, and apply Lemma~\ref{lem:lower} with $T=\lfloor H/\lambda\rfloor$ and $y=\lceil L/8\rceil$. Since
+$H/\lambda\ge2$ and $\lfloor x\rfloor\ge2x/3$ for $x\ge2$, we have
 \[
-q=\frac{h_x}{h_{N_j-1}}\ \ge\ \frac{\ell-4\log j-\log T-\log 2}{1+\ell}\ \ge\ 1-u,\qquad u=\frac{2+6\log j}{1+\ell}.
+\frac{2H}{3\lambda}\le T\le\frac{H}{\lambda}.
 \]
-Then $u\to0$ and $Tu\le(2+6\log j)/(\log j\cdot\log2)\to6/\log2<8.7$, so
-$q^T\ge\exp\bigl(-Tu/(1-u)\bigr)\ge e^{-9}$ for large $j$, and Lemma~\ref{lem:band} gives the bound.
+By \eqref{eq:harm} and $y\ge L/8$ we have $H-h_y\le\log((n-1)/y)\le\lambda$, so $q\ge1-x$ with $x=\lambda/H\le1/2$. The
+function $x\mapsto(1-x)^{1/x}$ is decreasing on $(0,1)$ and equals $1/4$ at $x=1/2$, and $T\le1/x$, so
+\[
+q^{T}\ge(1-x)^{1/x}\ge\frac14 .
+\]
+Next, $y/L\le2/9$: for $L=8$ we have $y=1$, and for $L\ge9$ we have $y\le(L+7)/8\le2L/9$. Since $L\le n/2$, we have
+$\lambda\ge\log16$ and $H\ge2\log16>5.5$, and by \eqref{eq:harm}
+\[
+h_{n-L-1}=H-\sum_{j=n-L}^{n-1}\frac1j\ge H-\frac{L}{n-L}\ge H-1,\qquad\text{so}\qquad\frac{H}{h_{n-L-1}}\le\frac{5.5}{4.5}<1.23 .
+\]
+Therefore
+\[
+\frac{T\,y}{L\,h_{n-L-1}}\le\frac{2}{9\lambda}\cdot\frac{H}{h_{n-L-1}}\le\frac{2\times1.23}{9\log16}<0.099 ,
+\]
+and Lemma~\ref{lem:lower} gives
+\[
+V(n,L)\ge\frac{2H}{3\lambda}\,(0.25-0.099)>\frac{H}{10\,\lambda}.
+\]
+The second inequality of the corollary is $h_{n-1}\ge\log n$.
 \end{proof}
 
-\section{Proof of Theorem~\ref{thm:main}}
+\section{Proofs of Theorem~\ref{thm:div} and Proposition~\ref{prop:two}}\label{sec:proofs}
 
-Fix $\delta\in(0,1)$ and take $N_j$, $L_j$, $B_j$ as in Corollary~\ref{cor:many}. Choose $j_0$ so large that the
-corollary holds for $j\ge j_0$ and $N_j-L_j>N_{j-1}$ for $j>j_0$; the blocks $B_j$, $j\ge j_0$, are then disjoint. Set
+By \eqref{eq:limit}, \eqref{eq:harm} and $i-1\ge i/2$,
+\begin{equation}\label{eq:abound}
+\frac{6}{\pi^2}\cdot\frac{\log i}{i}\le a(i)\le\frac{12}{\pi^2}\Bigl(1+\frac{1}{\log2}\Bigr)\frac{\log i}{i}\le\frac{3\log i}{i}
+\qquad(i\ge2).
+\end{equation}
+
+\begin{proof}[Proof of Theorem~\ref{thm:div}]
+Let $\psi(i)=\inf_{k\ge i}\varphi(k)$. Then $\psi\le\varphi$, and $\psi$ is positive, non-decreasing and tends to
+infinity. Choose integers $N_1<N_2<\cdots$ such that for every $j\ge1$
 \[
-f(i)=j^{-2+2\delta}\quad(i\in B_j,\ j\ge j_0),\qquad f(i)=0\ \text{otherwise}.
+\psi(\lceil N_j/2\rceil)\ge j^2,\qquad\log N_j\ge\max\bigl(2(j+4),\,j^3\bigr),\qquad N_{j+1}\ge2N_j+2 .
 \]
-Then $f(N_j)=0$ for every $j$.
-
-\emph{Decay.} For $i\in B_j$ we have $\log i\le\log N_j=j^2\log2$, so
+Let $L_j=\lfloor N_j/2^{j}\rfloor$ and $B_j=W(N_j,L_j)$, and define
 \[
-f(i)=(j^2)^{-(1-\delta)}=(\log 2)^{1-\delta}(\log N_j)^{-(1-\delta)}\le(\log i)^{-(1-\delta)}.
+f(i)=\frac{j^2}{\log N_j}\quad(i\in B_j,\ j\ge1),\qquad f(i)=0\quad\text{for all other }i .
 \]
+Every $i\in B_j$ satisfies $N_j/2\le i\le N_j-1$, and $N_j/2>N_{j-1}$ for $j\ge2$. The windows $B_j$ are therefore disjoint, none of
+them contains any $N_k$, and $f(N_k)=0$ for every $k$.
 
-\emph{Finite limit sum.} By \eqref{eq:limit} and $h_{i-1}\le1+\log i$ there is a constant $C$ with
-$a(i)\le C\log i/i$ for $i\ge2$. For $i\in B_j$ we have $i\ge N_j/2$, so
+\emph{Decay.} For $i\in B_j$ we have $i\ge\lceil N_j/2\rceil$, so $\varphi(i)\ge\psi(i)\ge j^2$, and $\log i\le\log N_j$.
+Hence $f(i)\le\varphi(i)/\log i$. Moreover $f(i)\le j^2/j^3=1/j$ on $B_j$, so $f(i)\to0$.
+
+\emph{Finite limit sum.} By \eqref{eq:abound}, each $i\in B_j$ has $a(i)\le3\log N_j/(N_j/2)$, and $B_j$ has
+$L_j\le N_j/2^{j}$ elements. Hence
 \[
-\sum_{i\in B_j}a(i)\ \le\ C\,(j^2\log2)\,\frac{2\,(L_j+1)}{N_j}\ \le\ \frac{3C}{j^{2}}
+\sum_{i\in B_j}a(i)f(i)\le\frac{N_j}{2^{j}}\cdot\frac{6\log N_j}{N_j}\cdot\frac{j^2}{\log N_j}=\frac{6j^2}{2^{j}},
 \]
-for large $j$, and $\sum_i a(i)f(i)\le\sum_j 3C\,j^{-4+2\delta}<\infty$.
+which is summable in $j$.
 
-\emph{Unbounded occupation sums.} By Corollary~\ref{cor:many},
+\emph{Unbounded occupation sums.} We apply Corollary~\ref{cor:many} with $n=N_j$ and $L=L_j$. Since
+$N_j\ge e^{2j+8}\ge2^{j+3}$ we have $8\le L_j\le N_j/2$ and $L_j\ge N_j/2^{j+1}$, so
+$\lambda_j:=\log(8N_j/L_j)\le(j+4)\log2$ and $h_{N_j-1}\ge\log N_j\ge2(j+4)\ge2\lambda_j$. The corollary gives
 \[
-\sum_{i=2}^{N_j}a(N_j,i)f(i)\ \ge\ j^{-2+2\delta}\sum_{i\in B_j}a(N_j,i)\ \ge\ e^{-9}\,j^{-2+2\delta}
-\Bigl\lfloor\frac{j^2}{\log j}\Bigr\rfloor\ \longrightarrow\ \infty .
+\sum_{i=2}^{N_j}a(N_j,i)f(i)\ge\frac{j^2}{\log N_j}\,V(N_j,L_j)\ge\frac{j^2}{\log N_j}\cdot\frac{\log N_j}{10\,(j+4)\log2}
+=\frac{j^2}{10\,(j+4)\log2},
 \]
-Every term used has $i\le N_j-1$, which proves the last sentence of the theorem.\qed
+which tends to infinity.
+\end{proof}
 
-\begin{remark}
-The weight in the proof is bounded, so it satisfies the growth condition of Ansatz 20 with $k=0$. Taking
-$f=\mathbf 1_{\bigcup_j B_j}$ (the case $\delta=1$) gives $\sum_i a(i)f(i)<\infty$ by the same estimate and occupation
-sums of order at least $j^2/\log j$ at $N_j$.
-\end{remark}
+\begin{proof}[Proof of Proposition~\ref{prop:two}(a)]
+The chain started at $n$ reaches $1$ after at most $n-1$ jumps, and its jumps add up to $n-1$. Given $X_t=m\ge2$, the
+expected size of the next jump is $\sum_{d=1}^{m-1}d\,p(m,m-d)=g(m)$, and each state $m\ge2$ is visited at most once.
+Taking expectations,
+\[
+n-1=\sum_{m=2}^{n}a(n,m)\,g(m).
+\]
+In the same way, for $2\le r\le n$ the sum $\sum_{m=2}^{r}a(n,m)g(m)$ is the expected total size of the jumps made from
+states $m\le r$, and these jumps add up to at most $r-1$. Hence
+\begin{equation}\label{eq:below}
+\sum_{m=2}^{r}a(n,m)\,g(m)\le r-1\qquad(2\le r\le n).
+\end{equation}
+The second identity of (a) holds because $a(i)g(i)=6/\pi^2$ for every $i\ge2$.
 
-\begin{remark}\label{rem:gap}
-The proof uses a window of relative width $(\log n)^{-2}$. A block of weight $c$ on a window of relative width $w$
-contributes about $c\,w\log n$ to the limit sum, while Lemma~\ref{lem:band} gives it at least $c\log n/\log\log n$ in the
-occupation sum when $w$ is at least a power of $(\log n)^{-1}$; for a window $n^{1-\eta}$ the jumps out of the window are
-no longer rare and the lemma gives only a bounded number of visits. The construction therefore stops short of weights of
-order $(\log i)^{-1}$, and we do not know whether part (i) holds for every $f$ with $f(i)=O((\log i)^{-1})$, or for
-every $f$ with $f(i)\to0$ that is monotone or regularly varying. For monotone $f$ the window just below $n$ carries weight close to $f(n)$, and the question becomes one
-about the sizes of $a(n,i)$ for $i$ near $n$, a range not covered by \cite{BCM} or \cite{S}.
-\end{remark}
+Now consider the weight $i-1=g(i)h_{i-1}$. On the one hand $\sum_{i=2}^{n}a(n,i)(i-1)\le h_{n-1}(n-1)$. On the other
+hand, by \eqref{eq:below}, for $2\le r<n$
+\[
+\sum_{i=2}^{n}a(n,i)(i-1)\ge h_r\sum_{i=r+1}^{n}a(n,i)\,g(i)\ge h_r\,(n-r).
+\]
+With $r=\lceil n/\log n\rceil$ both bounds are $(1+o(1))\,n\log n$. Since $g\ge1$, we also have
+$\sum_{i=2}^{n}a(n,i)\le n-1$, and therefore
+\begin{equation}\label{eq:linear}
+\sum_{i=2}^{n}a(n,i)\,i\sim n\log n .
+\end{equation}
+For the limits, \eqref{eq:limit} gives $a(i)\,i=(6/\pi^2)\,h_{i-1}\,(1+1/(i-1))$, and
+$\sum_{i=2}^{n}h_{i-1}=n\,h_{n-1}-(n-1)$, so
+\begin{equation}\label{eq:linearlimit}
+\sum_{i=2}^{n}a(i)\,i\sim\frac{6}{\pi^2}\,n\log n .
+\end{equation}
+Finally let $f(i)/i\to c\in(0,\infty)$. Given $\eta>0$ choose $M$ with $|f(i)-ci|\le\eta\,i$ for $i\ge M$. Since
+$a(n,i)\le1$,
+\[
+\Bigl|\sum_{i=2}^{n}a(n,i)f(i)-c\sum_{i=2}^{n}a(n,i)\,i\Bigr|\le\eta\sum_{i=2}^{n}a(n,i)\,i+\sum_{i=2}^{M-1}|f(i)-ci| ,
+\]
+and \eqref{eq:linear} gives $\sum_{i=2}^{n}a(n,i)f(i)\sim c\,n\log n$. The same argument with $a(i)\le1$ and
+\eqref{eq:linearlimit} gives the second asymptotic relation.
+\end{proof}
 
-\section{A computation}
+\begin{proof}[Proof of Proposition~\ref{prop:two}(b)]
+For $j\ge5$ let $N_j=2^{j^2}$, $L_j=\lfloor N_j/j^2\rfloor$ and $B_j=W(N_j,L_j)$, and let $f$ be the indicator of
+$\bigcup_{j\ge5}B_j$. Every $i\in B_j$ satisfies $N_j/2\le i<N_j$, and $N_j/2>N_{j-1}$, so the windows $B_j$ are
+disjoint. The window $B_j$ has $L_j$ elements and $N_j/(2j^2)\le L_j\le N_j/j^2$. By \eqref{eq:abound}, and because
+$\log x/x$ is decreasing for $x\ge e$, each $i\in B_j$ has
+\[
+\frac{6}{\pi^2}\cdot\frac{j^2\log2}{N_j}\le a(i)\le\frac{6\,j^2\log2}{N_j},
+\qquad\text{so}\qquad\frac{3\log2}{\pi^2}\le\sum_{i\in B_j}a(i)\le6\log2 .
+\]
+Hence $\sum_{i\ge2}a(i)f(i)=\infty$ and $\sum_{i=2}^{N_j}a(i)f(i)\le6\,j\log2$.
 
-By the Markov property, $a(n,n)=1$ and $a(n,i)=\sum_{m=i+1}^{n}a(n,m)\,/\,\bigl((m-i)\,h_{m-1}\bigr)$ for $i<n$; for $i$ in
-a window $\{n-L,\dots,n-1\}$ only states in the window and $n$ itself contribute, so the window sums can be computed
-exactly in $O(L^2)$ operations for very large $n$. Table~\ref{tab:band} lists $\sum_{i\in B_j}a(N_j,i)$ for the blocks of
-Corollary~\ref{cor:many} and the sums over the top sixteenth $\{n-n/16,\dots,n-1\}$ for $n=2^{10},2^{14},2^{18}$. The
-latter grow by about $0.88$ each time $n$ is multiplied by $16$, in line with the count of order $\log n$ in
-Remark~\ref{rem:gap}.
+We apply Corollary~\ref{cor:many} with $n=N_j$ and $L=L_j$. Here $8\le L_j\le N_j/2$ and
+$\lambda_j:=\log(8N_j/L_j)\le\log(16j^2)$, and $h_{N_j-1}\ge j^2\log2\ge2\log(16j^2)$ for $j\ge5$. The corollary gives
+\[
+\sum_{i=2}^{N_j}a(N_j,i)f(i)\ge V(N_j,L_j)\ge\frac{j^2\log2}{10\log(16j^2)} ,
+\]
+so the ratio in (b), taken at $n=N_j$, is at least $j/(60\log(16j^2))$, which tends to infinity.
+\end{proof}
+
+\section{A numerical check}\label{sec:num}
+
+The program \texttt{code/check\_bounds.py} in the repository of this paper evaluates the occupation probabilities in
+double-precision arithmetic with NumPy \cite{NumPy}, from the recursion
+$a(n,i)=\sum_{m=i+1}^{n}a(n,m)/((m-i)\,h_{m-1})$ for $i<n$, which follows from the Markov property at the last state
+above $i$. For $i$ in the window $W(n,L)$ only the states of the window and $n$ itself enter the recursion, so $V(n,L)$
+can be evaluated with $O(L^2)$ operations for very large $n$.
+
+For $n=4000$ the program finds $\sum_{i=2}^{n}a(n,i)g(i)=3999.0000000001$, and the ratio of this sum to
+$\sum_{i=2}^{n}a(i)g(i)$ agrees with $\pi^2/6$ to twelve digits. For the weight $f(i)=i$ the occupation sum is
+$32930.33$ against $n\log n=33176.20$, and $\sum_{i=2}^{n}a(i)\,i=19165.35$ against $(6/\pi^2)\,n\log n=20168.71$. The
+largest value of $a(n,i)/a(i)$ over the states with $n\ge i+\lfloor i/2\rfloor$ is $1.2211$, below the constant
+$\pi^2$ of Corollary~\ref{cor:point}(a). The bounds of Lemmas~\ref{lem:start} and~\ref{lem:point} hold in every case
+computed, with equality in Lemma~\ref{lem:start} at $t=0$.
+
+Table~\ref{tab:window} compares $V(n,L)$ with the bounds of Lemma~\ref{lem:window} and Corollary~\ref{cor:many}.
 
 \begin{table}[ht]
 \centering
-\begin{tabular}{rrrr}
+\begin{tabular}{rrrrr}
 \toprule
-$n$ & window $L$ & $\sum_{i=n-L}^{n-1}a(n,i)$ & \\
+$n$ & $L$ & $V(n,L)$ & lower bound & upper bound\\
 \midrule
-$2^{9}$ & $\lfloor n/3^4\rfloor=6$ & $0.479$ & $j=3$\\
-$2^{16}$ & $n/4^4=256$ & $1.022$ & $j=4$\\
-$2^{25}$ & $\lfloor n/5^4\rfloor=53{,}687$ & $1.696$ & $j=5$\\
-\midrule
-$2^{10}$ & $n/16$ & $1.407$ & \\
-$2^{14}$ & $n/16$ & $2.286$ & \\
-$2^{18}$ & $n/16$ & $3.172$ & \\
+$2^{9}$ & $56$ & $1.6200$ & -- & $2.2095$\\
+$2^{10}$ & $64$ & $1.4066$ & -- & $1.7572$\\
+$2^{14}$ & $1024$ & $2.2855$ & $0.2119$ & $2.7734$\\
+$2^{16}$ & $4096$ & $2.7284$ & $0.2405$ & $3.2848$\\
+$2^{18}$ & $16384$ & $3.1717$ & $0.2690$ & $3.7966$\\
+$2^{22}$ & $16384$ & $1.7413$ & $0.2076$ & $1.8554$\\
+$2^{30}$ & $16384$ & $0.9047$ & -- & $0.9271$\\
+$2^{40}$ & $16384$ & $0.5632$ & -- & $0.5705$\\
 \bottomrule
 \end{tabular}
-\caption{Expected visits of the harmonic descent chain started at $n$ to the window just below $n$.}\label{tab:band}
+\caption{The expected number $V(n,L)$ of visits to the window $W(n,L)$, the lower bound $h_{n-1}/(10\log(8n/L))$ of
+Corollary~\ref{cor:many}, and the upper bound of Lemma~\ref{lem:window}. A dash marks the rows with
+$h_{n-1}<2\log(8n/L)$, where the corollary does not apply.}\label{tab:window}
 \end{table}
 
 \section*{Acknowledgements and funding}
@@ -214,31 +534,81 @@ in the funding declaration above.
 
 \section*{Declaration of generative AI and AI-assisted technologies}
 The paper comes out of Math Brain, an ongoing project on the use of AI systems for research mathematics. In November 2026
-Claude Opus~5.5 (Anthropic), working in Claude Code, found the construction and the proofs, wrote and ran the
-computation of Table~\ref{tab:band}, and wrote the paper. The author directed the work and is responsible for the
-content of the paper and for decisions concerning its dissemination.
+Claude Opus~5.5 and Claude Fable~5.2 (Anthropic), working in Claude Code, found the statements and the proofs, wrote and
+ran the program of Section~\ref{sec:num}, and wrote the paper; GPT-6.1 (OpenAI), working in Codex, checked the proofs
+independently. The author directed the work and is responsible for the content of the paper and for decisions
+concerning its dissemination.
 
 \section*{Data availability}
-No data were used. The code for Table~\ref{tab:band}, with its output, is available at
+No external data were used. The program of Section~\ref{sec:num} and its output are available at
 \url{https://github.com/yspennstate/harmonic-descent-occupation-sums}.
 
 The paper is part of the Math Brain project, whose public repository is \url{https://github.com/yspennstate/math-brain-public}~\cite{MathBrainRepo}.
 
+\appendix
+\section{Notation and terminology}\label{sec:notation}
+
+\begin{longtable}{@{}lp{0.5\textwidth}p{0.27\textwidth}@{}}
+\toprule
+Symbol or term & Meaning & First appears\\
+\midrule
+\endhead
+$h_r$ & the $r$th harmonic number $\sum_{j=1}^{r}1/j$, with $h_0=0$ & \eqref{eq:kernel}\\
+$(X_t)_{t\ge0}$ & the harmonic descent chain, with transition probabilities \eqref{eq:kernel} & Section~\ref{sec:intro}\\
+$p(m,m-d)$ & the probability of a jump from $m$ to $m-d$ & \eqref{eq:kernel}\\
+$\P_n$, $\E_n$ & probability and expectation for the chain started at $n$ & Section~\ref{sec:intro}\\
+$a(n,i)$ & occupation probability: the probability that the chain started at $n$ visits the state $i$ & Section~\ref{sec:intro}\\
+$a(i)$ & the limit of $a(n,i)$ as $n\to\infty$, given by \eqref{eq:limit} & Section~\ref{sec:intro}\\
+weight, $f$ & a non-negative sequence $f$ on $\{2,3,\dots\}$ & Section~\ref{sec:intro}\\
+occupation sum & $\sum_{i=2}^{n}a(n,i)f(i)$, for a weight $f$ and a starting point $n$ & Section~\ref{sec:intro}\\
+limit sum & $\sum_{i\ge2}a(i)f(i)$, finite or infinite & Section~\ref{sec:intro}\\
+$\sim$, $o$, $O$, $C$ & asymptotic notation, with $C$ the constant in $x_n=O(y_n)$ & Section~\ref{sec:intro}\\
+$\gamma_*$ & the exponent $1.567\dots$ of \cite{BCM} & Section~\ref{sec:intro}\\
+$K$ & a constant with $f(i)\le K/\log i$ & Theorem~\ref{thm:conv}\\
+$\varphi$ & a positive sequence tending to infinity & Theorem~\ref{thm:div}\\
+$N_j$ & the starting points of the constructions & Theorem~\ref{thm:div}\\
+$g(i)$ & $(i-1)/h_{i-1}$, the expected size of the jump out of the state $i$ & \eqref{eq:g}\\
+$W(n,L)$ & the window $\{n-L,\dots,n-1\}$ of width $L$ below $n$ & Section~\ref{sec:intro}\\
+$V(n,L)$ & the expected number of visits of the chain started at $n$ to $W(n,L)$ & \eqref{eq:V}\\
+$B$ & a set of states in $\{2,\dots,n-1\}$ & \eqref{eq:visits}\\
+$\rho$ & $h_L/h_{n-L-1}$ & proof of Lemma~\ref{lem:window}\\
+$S_t(i)$ & $\sum_{\ell=i}^{i+t}a(\ell,i)$ & Lemma~\ref{lem:start}\\
+$\varepsilon$ & a positive exponent in Section~\ref{sec:intro}; the splitting fraction in Corollary~\ref{cor:point}(b) and the proof of Theorem~\ref{thm:conv} & Section~\ref{sec:intro}\\
+$M$ & the cut-off of the splitting in the proof of Theorem~\ref{thm:conv} & proof of Theorem~\ref{thm:conv}\\
+$\theta$ & a fixed exponent $\theta<1$ & Remark~\ref{rem:bcm}\\
+$D_s$ & the $s$th jump $X_{s-1}-X_s$ of the chain & Section~\ref{sec:lower}\\
+$y$, $T$, $q$ & a bound on the jump sizes, a number of jumps, and $q=h_y/h_{n-1}$ & Lemma~\ref{lem:lower}\\
+$\ind\{\cdot\}$ & the indicator of an event & proof of Lemma~\ref{lem:lower}\\
+$Z$ & the sum of the jumps of size at most $y$ made from states $\ge n-L$ in the first $T$ steps & proof of Lemma~\ref{lem:lower}\\
+$E$ & the event that each of the first $T$ jumps has size at most $y$ & proof of Lemma~\ref{lem:lower}\\
+$\tau$ & the first time the chain is below $n-L$ & proof of Lemma~\ref{lem:lower}\\
+$\lambda$ & $\log(8n/L)$ & Corollary~\ref{cor:many}\\
+$H$ & $h_{n-1}$ & proof of Corollary~\ref{cor:many}\\
+$x$ & $\lambda/H$ & proof of Corollary~\ref{cor:many}\\
+$c$ & the limit of $f(i)/i$ & Proposition~\ref{prop:two}\\
+$\eta$ & a tolerance $\eta>0$ & proof of Proposition~\ref{prop:two}\\
+$\psi$ & $\psi(i)=\inf_{k\ge i}\varphi(k)$ & Section~\ref{sec:proofs}\\
+$L_j$, $B_j$ & the widths and the windows $B_j=W(N_j,L_j)$ of the constructions & Section~\ref{sec:proofs}\\
+$\lambda_j$ & $\log(8N_j/L_j)$ & Section~\ref{sec:proofs}\\
+\bottomrule
+\end{longtable}
+
 \begin{thebibliography}{99}
 \bibitem{AJ} D.~Aldous and S.~Janson, \emph{The critical beta-splitting random tree II: overview and open problems},
-arXiv:2303.02529v3, 2024.
-\bibitem{AJL} D.~Aldous, S.~Janson and X.~Li, \emph{The harmonic descent chain}, Electron.\ Commun.\ Probab.\ \textbf{29} (2024), 1--10; arXiv:2405.05102.
+arXiv:2303.02529v3, 2025.
+\bibitem{AJL} D.~Aldous, S.~Janson and X.~Li, \emph{The harmonic descent chain}, Electron.\ Commun.\ Probab.\ \textbf{29} (2024), Paper No.~77, 1--10. \url{https://doi.org/10.1214/24-ECP645}, arXiv:2405.05102.
 \bibitem{AP} D.~Aldous and B.~Pittel, \emph{The critical beta-splitting random tree I: heights and related results},
-Ann.\ Appl.\ Probab.\ \textbf{35} (2025), 158--195; arXiv:2302.05066.
-\bibitem{CMS} Y.~R.~Chorbadzhiyska, M.~Minchev and M.~Savov, \emph{Asymptotics for beta-splitting trees via homogeneous fragmentations and meromorphic potential theory}, arXiv:2608.18320, 2026.
-\bibitem{I} A.~Iksanov, \emph{The harmonic descent chain and regenerative composition structures}, Electron.\ Commun.\ Probab.\ \textbf{30} (2025), 1--3; arXiv:2412.06826.
+Ann.\ Appl.\ Probab.\ \textbf{35} (2025), no.~1, 158--195. \url{https://doi.org/10.1214/24-AAP2112}, arXiv:2302.05066.
 \bibitem{BCM} A.~Brandenberger, B.~Chin and E.~Mossel, \emph{Asymptotics for the harmonic descent chain and applications
 to critical beta-splitting trees}, arXiv:2505.24821v3, 2026.
+\bibitem{CMS} Y.~R.~Chorbadzhiyska, M.~Minchev and M.~Savov, \emph{Asymptotics for beta-splitting trees via homogeneous fragmentations and meromorphic potential theory}, arXiv:2608.18320v1, 2026.
+\bibitem{NumPy} C.~R.~Harris, K.~J.~Millman, S.~J.~van~der~Walt, R.~Gommers, P.~Virtanen, D.~Cournapeau, E.~Wieser, J.~Taylor, S.~Berg, N.~J.~Smith, R.~Kern, M.~Picus, S.~Hoyer, M.~H.~van~Kerkwijk, M.~Brett, A.~Haldane, J.~Fern\'andez del R\'{\i}o, M.~Wiebe, P.~Peterson, P.~G\'erard-Marchant, K.~Sheppard, T.~Reddy, W.~Weckesser, H.~Abbasi, C.~Gohlke and T.~E.~Oliphant, \emph{Array programming with NumPy}, Nature \textbf{585} (2020), 357--362. \url{https://doi.org/10.1038/s41586-020-2649-2}
+\bibitem{I} A.~Iksanov, \emph{The harmonic descent chain and regenerative composition structures}, Electron.\ Commun.\ Probab.\ \textbf{30} (2025), Paper No.~11, 1--3. \url{https://doi.org/10.1214/25-ECP661}, arXiv:2412.06826.
 \bibitem{S} S.~P.~Svihla, \emph{Exact asymptotics for the harmonic descent chain and extended convergence bounds for
-recursive statistics}, arXiv:2611.00347, 2026.
+recursive statistics}, arXiv:2611.00347v1, 2026.
 \bibitem{MathBrainRepo} Y.~Shmalo, \emph{Math Brain: public snapshot, code and tests}, 2026, \url{https://github.com/yspennstate/math-brain-public}.
 
-\bibitem{MathBrainPaper} Y.~Shmalo, \emph{Math Brain: shared, auditable memory for multi-agent mathematical research}, October 2026, \url{https://github.com/yspennstate/math-brain-public/tree/main/papers/math-brain-2026-10-24}.
+\bibitem{MathBrainPaper} Y.~Shmalo, \emph{Math Brain: shared, auditable memory for multi-agent mathematical research}, October 2026, \url{https://github.com/yspennstate/math-brain-public/tree/main/papers/math-brain-2026-10-24}, archived on Zenodo, \url{https://doi.org/10.5281/zenodo.24150837}.
 
 \bibitem{BrainFramework} Y.~Shmalo, \emph{Brain Framework}, public software repository, 2026, \url{https://github.com/yspennstate/brain-framework-public}.
 

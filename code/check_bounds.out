@@ -1,0 +1,24 @@
+Part 1, n = 4000
+  sum a(n,i)(i-1)/h_{i-1} = 3999.0000000001   n-1 = 3999
+  sum a(i)(i-1)/h_{i-1}   = 2431.1004803143   ratio = 1.644934066848   pi^2/6 = 1.644934066848
+  sum a(n,i) i = 32930.33   n log n = 33176.20   sum a(i) i = 19165.35   (6/pi^2) n log n = 20168.71
+  min a(n,i)/a(i) over 2 <= i <= n: 1.000001 (BCM monotonicity gives >= 1)
+  max a(n,i)/a(i) over n >= i + floor(i/2): 1.2211   (Corollary 2.4(a): <= pi^2 = 9.8696)
+  max a(n,i) / [h_i/((t+1)(h_i-h_t))], t = n-i < i: 1.000000   (Lemma 2.3: <= 1)
+Part 2, a(m,i) for m = i..i+K
+  i =    2: increases in m: 0   max_t S_t (h_i - h_t)/h_i = 1.000000 (Lemma 2.2: <= 1)   a(i+K,i)/a(i) = 1.000001
+  i =    3: increases in m: 0   max_t S_t (h_i - h_t)/h_i = 1.000000 (Lemma 2.2: <= 1)   a(i+K,i)/a(i) = 1.000002
+  i =    7: increases in m: 0   max_t S_t (h_i - h_t)/h_i = 1.000000 (Lemma 2.2: <= 1)   a(i+K,i)/a(i) = 1.000011
+  i =   50: increases in m: 0   max_t S_t (h_i - h_t)/h_i = 1.000000 (Lemma 2.2: <= 1)   a(i+K,i)/a(i) = 1.000274
+  i =  300: increases in m: 0   max_t S_t (h_i - h_t)/h_i = 1.000000 (Lemma 2.2: <= 1)   a(i+K,i)/a(i) = 1.004337
+  i = 1000: increases in m: 0   max_t S_t (h_i - h_t)/h_i = 1.000000 (Lemma 2.2: <= 1)   a(i+K,i)/a(i) = 1.024701
+Part 3, expected visits to {n-L,...,n-1}
+  n        L          visits     lower      upper     
+  2^10     64         1.4066     nan        1.7572    
+  2^14     1024       2.2855     0.2119     2.7734    
+  2^18     16384      3.1717     0.2690     3.7966    
+  2^22     16384      1.7413     0.2076     1.8554    
+  2^30     16384      0.9047     nan        0.9271    
+  2^40     16384      0.5632     nan        0.5705    
+  2^9      56         1.6200     nan        2.2095    
+  2^16     4096       2.7284     0.2405     3.2848    
